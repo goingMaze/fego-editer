@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { AtomicBlockUtils, Entity } from 'draft-js'
+import { AtomicBlockUtils } from 'draft-js'
 import { ToolBarBtn } from 'utils'
 import Iconfont from 'iconfont'
 
@@ -20,8 +20,8 @@ export default class Image extends Component {
 	static propTypes = {
 		editorState: PropTypes.object.isRequired,
 		onChange: PropTypes.func.isRequired,
-		uploadUrl: PropTypes.string,
-		uploadCallBack: PropTypes.func
+		config: PropTypes.object.isRequired,
+		modalManage: PropTypes.object.isRequired
 	}
 	constructor(props) {
 		super(props)
@@ -51,9 +51,8 @@ export default class Image extends Component {
 		this.changeImgVisible()
 	}
 	handleImgAdd = () => {
-		let { uploadUrl, uploadCallBack } = this.props;
+		let { uploadUrl = '', uploadCallBack = null } = this.props.config;
 		let { imgAddType } = this.state;
-		uploadUrl = uploadUrl || 'api/com/upload'
 		if (imgAddType === 'local' && uploadUrl) {
 			let callback = imgUrl => this.setState({ imgUrl }, this.confirmMedia);
 			uploadCallBack ? uploadCallBack(uploadUrl, this.refs.url, callback) :

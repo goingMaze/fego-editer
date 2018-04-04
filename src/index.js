@@ -8,9 +8,11 @@ import { handleNewLine } from 'draftjs-utils'
 import * as ToolBars from './ToolBars'
 import { LinkDecorator } from './Decorators'
 import mediaBlockRenderer from './RenderFn'
-import { defaultToolBars, defaultBlockRenderMap } from './default'
+import defaultToolBars from './defaultToolBars'
 import { ModalManage, setCustomStyleMap } from 'utils'
+import './reset.css'
 import './index.css'
+import 'draft-js/dist/Draft.css'
 
 const decorator = new CompositeDecorator([LinkDecorator]);
 
@@ -88,9 +90,7 @@ export default class MyEditor extends Component {
 	// 按键回调
 	handleKeyCommand = command => {
 		let { editorState } = this.state;
-		const selection = editorState.getSelection();
-		const blockType = editorState.getCurrentContent().getBlockForKey(selection.getStartKey()).getType();
-		const newEditorState = RichUtils.handleKeyCommand(editorState)
+		const newEditorState = RichUtils.handleKeyCommand(editorState, command)
 		if (newEditorState) {
 			this.onChange(newEditorState)
 			return true
@@ -103,8 +103,8 @@ export default class MyEditor extends Component {
 	}
 	render() {
 		const { editorState } = this.state;
-		let { toolBars = {} } = this.props;
-		toolBars = Object.assign({}, defaultToolBars, toolBars) 
+		let { toolBars = {}, style } = this.props;
+		toolBars = Object.assign({}, defaultToolBars, toolBars)
 		let className = 'FegoEditor-editor';
 		let contentState = editorState.getCurrentContent();
 		if (!contentState.hasText()) {
@@ -117,7 +117,7 @@ export default class MyEditor extends Component {
 			bgColor: toolBars.BgColor
 		})
 		return (
-			<div className="FegoEditor-root" onMouseDown={this.modalManage.changeModals} id='fegoEditor' ref={editor => this.editor = editor} >
+			<div className="FegoEditor-root" onMouseDown={this.modalManage.changeModals} style={style} id='fegoEditor' ref={editor => this.editor = editor} >
 				<div className='FegoEditor-toolbar' >
 					{
 						toolBars.options.map((item, idx) => {
@@ -134,7 +134,6 @@ export default class MyEditor extends Component {
 						onChange={this.onChange}
 						blockStyleFn={getBlockStyle}
 						blockRendererFn={this.blockRendererFn}
-						blockRenderMap={DefaultDraftBlockRenderMap.merge(defaultBlockRenderMap)}
 						customStyleMap={customStyleMap}
 						handleReturn={this.handleReturn}
 						handleKeyCommand={this.handleKeyCommand}
