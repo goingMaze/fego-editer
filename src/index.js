@@ -162,5 +162,3 @@ function getBlockStyle(block) {
 }
 
 export { draftToHtml, htmlToDraft } from 'utils'
-
-console.log('test travis')
